@@ -17,6 +17,7 @@ dependencies {
     testImplementation(platform('org.junit:junit-bom:5.7.0'))
     testImplementation('org.junit.jupiter:junit-jupiter')
     implementation group: 'org.bytedeco', name: 'javacv-platform', version: '1.5.4'
+    implementation 'org.jetbrains:annotations:15.0'
 
 }
 

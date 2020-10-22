@@ -1,4 +1,7 @@
 import detector.Detector;
+import org.bytedeco.javacv.FrameGrabber;
+
+import java.awt.image.BufferedImage;
 
 public class MyPresenter {
     private MyView view;
@@ -9,13 +12,36 @@ public class MyPresenter {
         this.view = view;
         this.detector = detector;
         this.camera = camera;
+        startCanvas();
     }
 
-    public MyPresenter(MyView view) {
+    public MyPresenter(MyView view) throws FrameGrabber.Exception {
         this(view, new Detector(), new MyCamera());
     }
 
-    public String getIrisColor() {
+    public String getIrisColor() throws FrameGrabber.Exception {
         return detector.getIrisColor(camera.grabImage()).toString();
+    }
+
+    private void startCanvas() {
+        while (view.isVisible()) {
+            try {
+                BufferedImage grabbedImage = camera.grabBufferedImage();
+                view.showImage(grabbedImage);
+            } catch (FrameGrabber.Exception e) {
+                e.printStackTrace();
+                break;
+            }
+        }
+        terminate();
+    }
+
+    private void terminate() {
+        try {
+            camera.stop();
+        } catch (FrameGrabber.Exception e) {
+            e.printStackTrace();
+        }
+
     }
 }

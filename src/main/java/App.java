@@ -1,9 +1,16 @@
+import org.bytedeco.javacv.FrameGrabber;
+
 public class App {
     public static void main(String[] args) {
         launch();
     }
 
     public static void launch() {
-        MyPresenter myPresenter = new MyPresenter(new MyView());
+        try {
+            MyPresenter myPresenter = new MyPresenter(new MyView());
+        } catch (FrameGrabber.Exception e) {
+            //TODO: send information to the View
+            e.printStackTrace();
+        }
     }
 }
