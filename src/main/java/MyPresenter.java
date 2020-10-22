@@ -12,7 +12,7 @@ public class MyPresenter {
         this.view = view;
         this.detector = detector;
         this.camera = camera;
-        startCanvas();
+        startCameraDisplay();
     }
 
     public MyPresenter(MyView view) throws FrameGrabber.Exception {
@@ -23,7 +23,7 @@ public class MyPresenter {
         return detector.getIrisColor(camera.grabImage()).toString();
     }
 
-    private void startCanvas() {
+    private void startCameraDisplay() {
         while (view.isVisible()) {
             try {
                 BufferedImage grabbedImage = camera.grabBufferedImage();

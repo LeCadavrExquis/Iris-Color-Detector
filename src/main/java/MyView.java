@@ -12,7 +12,7 @@ public class MyView extends JFrame {
         super("Iris Color Detector");
         this.setSize(740, 580);
         this.setVisible(true);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.add(imagePanel);
     }
 
