@@ -1,4 +1,5 @@
 import org.bytedeco.javacv.CanvasFrame;
+import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.FrameGrabber;
 import org.bytedeco.javacv.OpenCVFrameConverter;
 import org.bytedeco.opencv.opencv_core.Mat;
@@ -15,6 +16,9 @@ public class MyCamera {
         this.converter = new OpenCVFrameConverter.ToMat();
     }
 
+    public Frame grabFrame() throws FrameGrabber.Exception {
+        return grabber.grab();
+    }
 
     public Mat grabImage() throws FrameGrabber.Exception {
         return converter.convert(grabber.grab());
