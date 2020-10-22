@@ -9,9 +9,11 @@ sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
+    jcenter()
 }
 
 dependencies {
+    testImplementation('org.mockito:mockito-core:2.+')
     testImplementation(platform('org.junit:junit-bom:5.7.0'))
     testImplementation('org.junit.jupiter:junit-jupiter')
     implementation group: 'org.bytedeco', name: 'javacv-platform', version: '1.5.4'
@@ -20,8 +22,5 @@ dependencies {
 
 test {
     useJUnitPlatform()
-    testLogging {
-        events "passed", "skipped", "failed"
-    }
     ignoreFailures = true
 }
