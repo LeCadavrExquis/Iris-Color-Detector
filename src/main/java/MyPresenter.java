@@ -1,7 +1,7 @@
 import detector.Detector;
 import org.bytedeco.javacv.FrameGrabber;
 
-import java.awt.*;
+import java.awt.image.BufferedImage;
 
 public class MyPresenter {
     private MyView view;
@@ -12,7 +12,6 @@ public class MyPresenter {
         this.view = view;
         this.detector = detector;
         this.camera = camera;
-        view.setCanvas(camera.canvasFrame.getCanvas());
         startCanvas();
     }
 
@@ -27,7 +26,8 @@ public class MyPresenter {
     private void startCanvas() {
         while (view.isVisible()) {
             try {
-                camera.canvasFrame.showImage(camera.grabFrame());
+                BufferedImage grabbedImage = camera.grabBufferedImage();
+                view.showImage(grabbedImage);
             } catch (FrameGrabber.Exception e) {
                 e.printStackTrace();
                 break;

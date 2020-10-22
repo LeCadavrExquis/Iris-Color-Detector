@@ -1,23 +1,49 @@
-import org.bytedeco.librealsense.frame;
-
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 public class MyView extends JFrame {
-    //TODO: implement UI
-    JPanel canvasPanel = new JPanel();
+    ImagePanel imagePanel = new ImagePanel();
 
     public MyView() {
-        this.setSize(550, 300);
+        super("Iris Color Detector");
+        this.setSize(740, 580);
         this.setVisible(true);
-        this.add(canvasPanel);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.add(imagePanel);
     }
 
-    public void paint(Graphics g) {
-        g.drawString("A myFrame object", 10, 50);
+    public void showImage(BufferedImage image) {
+        imagePanel.setImage(image);
+        this.revalidate();
+        this.repaint();
     }
 
-    public void setCanvas(Canvas canvas) {
-        canvasPanel.add(canvas);
+    private class ImagePanel extends JPanel {
+        private BufferedImage image;
+
+        public ImagePanel() {
+            try {
+                this.image = ImageIO.read(new File("src/main/resources/rys1.jpg"));
+            } catch (IOException e) {
+                //TODO: do smth about it
+                e.printStackTrace();
+            }
+        }
+
+        public void setImage(BufferedImage image) {
+            this.image = image;
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            int width = image.getWidth();
+            int height = image.getHeight();
+            g.drawImage(image, 0, 0, width, height, null);
+        }
     }
 }
