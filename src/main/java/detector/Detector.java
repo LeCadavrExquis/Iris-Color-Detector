@@ -8,9 +8,12 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-import static org.bytedeco.opencv.global.opencv_core.CV_8UC1;
-import static org.bytedeco.opencv.global.opencv_imgproc.*;
+import static org.bytedeco.opencv.global.opencv_imgproc.CV_AA;
+import static org.bytedeco.opencv.global.opencv_imgproc.rectangle;
 
 public class Detector {
     private CascadeClassifier classifier;
@@ -27,24 +30,52 @@ public class Detector {
         }
     }
 
-    public Mat drawDetectedEyes(@NotNull Mat image) {
-        Mat grayImage = new Mat(image.rows(), image.cols(), CV_8UC1);
-        cvtColor(image, grayImage, CV_BGR2GRAY);
-        RectVector faces = new RectVector();
-        classifier.detectMultiScale(grayImage, faces);
-        long total = faces.size();
+    public Mat drawDetectedEyes(@NotNull Mat mat) {
+        RectVector eyes = new RectVector();
+        classifier.detectMultiScale(mat, eyes);
+        Set<Rect> checkedEyes = checkEyes(eyes);
 
-        for (long i = 0; i < total; i++) {
-            Rect r = faces.get(i);
-            int x = r.x(), y = r.y(), w = r.width(), h = r.height();
-            rectangle(image, new Point(x, y), new Point(x + w, y + h), Scalar.RED, 1, CV_AA, 0);
-        }
-
-        return image;
+        checkedEyes.stream().
+                forEach(r -> rectangle(mat, new Point(r.x(), r.y()),
+                        new Point(r.x() + r.width(), r.y() + r.height()),
+                        Scalar.RED, 1, CV_AA, 0));
+        return mat;
     }
 
-    public IrisColor getIrisColor(Mat mat) {
-        //TODO implement getIrisColor(Mat)
+    public IrisColor getIrisColor(Mat mat) throws EyesNotFoundException {
+        Set<Mat> cutEyes = getCutEyes(mat);
+        //TODO: decompose to HSV
         return null;
+    }
+
+    private Set<Mat> getCutEyes(Mat mat) throws EyesNotFoundException {
+        RectVector eyes = new RectVector();
+        classifier.detectMultiScale(mat, eyes);
+        Set<Rect> checkedEyes = checkEyes(eyes);
+
+        if (checkedEyes.isEmpty()) {
+            throw new EyesNotFoundException();
+        }
+
+        return checkedEyes.stream()
+                .map(roi -> mat.apply(roi))
+                .collect(Collectors.toSet());
+    }
+
+    private Set<Rect> checkEyes(RectVector eyes) {
+        Set<Rect> checkedEyes = new HashSet<>();
+        long total = eyes.size();
+        for (long i = 0; i < total; i++) {
+            Rect r = eyes.get(i);
+            for (long j = 1; j < total; j++) {
+                Rect tmpR = eyes.get(j);
+                if ((tmpR.y() > r.y() - r.height() / 2) && (tmpR.y() < r.y() + r.height() / 2)) {
+                    checkedEyes.add(r);
+                    checkedEyes.add(tmpR);
+                    return checkedEyes;
+                }
+            }
+        }
+        return checkedEyes;
     }
 }

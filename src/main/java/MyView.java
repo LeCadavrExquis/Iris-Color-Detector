@@ -27,9 +27,9 @@ public class MyView extends JFrame {
 
         public ImagePanel() {
             try {
+                //TODO: change it to input stream
                 this.image = ImageIO.read(new File("src/main/resources/rys1.jpg"));
             } catch (IOException e) {
-                //TODO: do smth about it
                 e.printStackTrace();
             }
         }
