@@ -9,7 +9,7 @@ public class App {
         try {
             MyPresenter myPresenter = new MyPresenter(new MyView());
         } catch (FrameGrabber.Exception e) {
-            //TODO: send information to the View
+            //TODO: send information for a user
             e.printStackTrace();
         }
     }

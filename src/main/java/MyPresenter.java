@@ -1,5 +1,6 @@
 import detector.Detector;
 import org.bytedeco.javacv.FrameGrabber;
+import org.bytedeco.opencv.opencv_core.Mat;
 
 import java.awt.image.BufferedImage;
 
@@ -27,7 +28,8 @@ public class MyPresenter {
         while (view.isVisible()) {
             try {
                 BufferedImage grabbedImage = camera.grabBufferedImage();
-                view.showImage(grabbedImage);
+                Mat img = detector.drawDetectedEyes(camera.grabImage());
+                view.showImage(camera.convertMat2BufferedImage(img));
             } catch (FrameGrabber.Exception e) {
                 e.printStackTrace();
                 break;
