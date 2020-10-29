@@ -25,6 +25,10 @@ public class MyCamera {
         return toMatConverter.convert(grabber.grab());
     }
 
+    public BufferedImage convertMat2BufferedImage(Mat image) {
+        return toBufferedImageConverter.convert(toMatConverter.convert(image));
+    }
+
     public void stop() throws FrameGrabber.Exception {
         grabber.stop();
     }

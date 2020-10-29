@@ -1,5 +1,7 @@
 import detector.Detector;
+import detector.EyesNotFoundException;
 import org.bytedeco.javacv.FrameGrabber;
+import org.bytedeco.opencv.opencv_core.Mat;
 
 import java.awt.image.BufferedImage;
 
@@ -20,14 +22,28 @@ public class MyPresenter {
     }
 
     public String getIrisColor() throws FrameGrabber.Exception {
-        return detector.getIrisColor(camera.grabImage()).toString();
+        String colorName = "";
+        int failCounter = 0;
+        while (colorName.isEmpty()) {
+            try {
+                colorName = detector.getIrisColor(camera.grabImage()).toString();
+            } catch (EyesNotFoundException e) {
+                failCounter++;
+            } finally {
+                if (failCounter > 20) {
+                    colorName = "cannot define, sorry";
+                }
+            }
+        }
+        return colorName;
     }
 
     private void startCameraDisplay() {
         while (view.isVisible()) {
             try {
                 BufferedImage grabbedImage = camera.grabBufferedImage();
-                view.showImage(grabbedImage);
+                Mat img = detector.drawDetectedEyes(camera.grabImage());
+                view.showImage(camera.convertMat2BufferedImage(img));
             } catch (FrameGrabber.Exception e) {
                 e.printStackTrace();
                 break;

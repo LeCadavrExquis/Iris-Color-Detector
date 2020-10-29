@@ -5,5 +5,5 @@ public enum IrisColor {
     BRAZOWY,
     ZIELONY,
     SZARY
-    //TODO implement method for converting numeric values to color (RGB or HSV)
+    //TODO implement method for converting numeric values (HSV) to color
 }
