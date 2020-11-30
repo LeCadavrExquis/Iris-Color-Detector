@@ -44,6 +44,7 @@ public class MyPresenter {
                 BufferedImage grabbedImage = camera.grabBufferedImage();
                 Mat img = detector.drawDetectedEyes(camera.grabImage());
                 view.showImage(camera.convertMat2BufferedImage(img));
+                getIrisColor();
             } catch (FrameGrabber.Exception e) {
                 e.printStackTrace();
                 break;

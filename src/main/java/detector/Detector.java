@@ -1,19 +1,25 @@
 package detector;
 
 import org.bytedeco.javacpp.Loader;
+import org.bytedeco.javacv.Java2DFrameConverter;
+import org.bytedeco.javacv.OpenCVFrameConverter;
 import org.bytedeco.opencv.opencv_core.*;
 import org.bytedeco.opencv.opencv_objdetect.CascadeClassifier;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.bytedeco.opencv.global.opencv_imgproc.CV_AA;
-import static org.bytedeco.opencv.global.opencv_imgproc.rectangle;
+import static org.bytedeco.opencv.global.opencv_imgproc.*;
+import static org.bytedeco.opencv.global.opencv_core.CV_8UC3;
 
 public class Detector {
     private CascadeClassifier classifier;
@@ -43,12 +49,23 @@ public class Detector {
     }
 
     public IrisColor getIrisColor(Mat mat) throws EyesNotFoundException {
-        Set<Mat> cutEyes = getCutEyes(mat);
+        List<Mat> cutEyes = getCutEyes(mat);
+        for(int i=0; i<cutEyes.size(); i++)
+        {
+            int height = cutEyes.get(i).rows();
+            int width = cutEyes.get(i).cols();
+            Mat tempHsv = new Mat(height,width, CV_8UC3);
+            cvtColor(cutEyes.get(i), tempHsv, CV_BGR2HSV);
+            Java2DFrameConverter toBufferedImageConverter= new Java2DFrameConverter();
+            OpenCVFrameConverter.ToMat toMatConverter = new OpenCVFrameConverter.ToMat();
+            BufferedImage debugImage = toBufferedImageConverter.convert(toMatConverter.convert(tempHsv));
+            int x= 0;
+        }
         //TODO: decompose to HSV
         return null;
     }
 
-    private Set<Mat> getCutEyes(Mat mat) throws EyesNotFoundException {
+    private List<Mat> getCutEyes(Mat mat) throws EyesNotFoundException {
         RectVector eyes = new RectVector();
         classifier.detectMultiScale(mat, eyes);
         Set<Rect> checkedEyes = checkEyes(eyes);
@@ -59,7 +76,7 @@ public class Detector {
 
         return checkedEyes.stream()
                 .map(roi -> mat.apply(roi))
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
     }
 
     private Set<Rect> checkEyes(RectVector eyes) {
