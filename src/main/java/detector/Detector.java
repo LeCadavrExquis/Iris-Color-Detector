@@ -48,7 +48,7 @@ public class Detector {
         return mat;
     }
 
-    public IrisColor getIrisColor(Mat mat) throws EyesNotFoundException {
+    public String getIrisColor(Mat mat) throws EyesNotFoundException {
         List<Mat> cutEyes = getCutEyes(mat);
         for(int i=0; i<cutEyes.size(); i++)
         {
@@ -61,8 +61,8 @@ public class Detector {
             BufferedImage debugImage = toBufferedImageConverter.convert(toMatConverter.convert(tempHsv));
             int x= 0;
         }
-        //TODO: decompose to HSV
-        return null;
+
+        return IrisColor.BRAZOWY.toString();
     }
 
     private List<Mat> getCutEyes(Mat mat) throws EyesNotFoundException {
