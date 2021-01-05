@@ -3,17 +3,24 @@ import detector.EyesNotFoundException;
 import org.bytedeco.javacv.FrameGrabber;
 import org.bytedeco.opencv.opencv_core.Mat;
 
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 
-public class MyPresenter {
+public class MyPresenter implements ActionListener {
     private MyView view;
     private Detector detector;
     private MyCamera camera;
+    private boolean showEyes = false;
 
     private MyPresenter(MyView view, Detector detector, MyCamera camera) {
         this.view = view;
         this.detector = detector;
         this.camera = camera;
+
+        view.setActionListener(this::actionPerformed);
+
         startCameraDisplay();
     }
 
@@ -41,10 +48,15 @@ public class MyPresenter {
     private void startCameraDisplay() {
         while (view.isVisible()) {
             try {
-                BufferedImage grabbedImage = camera.grabBufferedImage();
-                Mat img = detector.drawDetectedEyes(camera.grabImage());
-                view.showImage(camera.convertMat2BufferedImage(img));
-                getIrisColor();
+                BufferedImage grabbedImage = null;
+                if (showEyes){
+                    Mat mat = detector.drawDetectedEyes(camera.grabImage());
+                    grabbedImage = camera.convertMat2BufferedImage(mat);
+                }else{
+                    grabbedImage = camera.grabBufferedImage();
+                }
+
+                view.showImage(grabbedImage);
             } catch (FrameGrabber.Exception e) {
                 e.printStackTrace();
                 break;
@@ -60,5 +72,26 @@ public class MyPresenter {
             e.printStackTrace();
         }
 
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        switch (e.getActionCommand()){
+            case "detect":
+                try {
+                    view.setEyeColor(getIrisColor());
+                } catch (FrameGrabber.Exception exception) {
+                    exception.printStackTrace();
+                }
+                break;
+            case "showEyes":
+                JRadioButton button = (JRadioButton) e.getSource();
+                if (button.isSelected()){
+                    showEyes = true;
+                }else{
+                    showEyes = false;
+                }
+                break;
+        }
     }
 }
