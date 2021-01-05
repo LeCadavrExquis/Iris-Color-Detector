@@ -9,11 +9,11 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-public class MyView extends JFrame {
+public class View extends JFrame {
     ImagePanel imagePanel = new ImagePanel();
     SettingsPanel settingsPanel = new SettingsPanel();
 
-    public MyView() {
+    public View() {
         super("Iris Color Detector");
         this.setSize(740, 580);
         this.setVisible(true);

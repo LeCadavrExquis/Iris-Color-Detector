@@ -36,7 +36,7 @@ public class Detector {
         }
     }
 
-    public Mat drawDetectedEyes(@NotNull Mat mat) {
+    public Mat drawDetectedEyes(Mat mat) {
         RectVector eyes = new RectVector();
         classifier.detectMultiScale(mat, eyes);
         Set<Rect> checkedEyes = checkEyes(eyes);

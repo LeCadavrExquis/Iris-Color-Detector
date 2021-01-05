@@ -7,7 +7,7 @@ public class App {
 
     public static void launch() {
         try {
-            MyPresenter myPresenter = new MyPresenter(new MyView());
+            Controller controller = new Controller(new View());
         } catch (FrameGrabber.Exception e) {
             //TODO: send information for a user
             e.printStackTrace();
