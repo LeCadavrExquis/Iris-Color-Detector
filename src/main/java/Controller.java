@@ -8,13 +8,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 
-public class MyPresenter implements ActionListener {
-    private MyView view;
+public class Controller implements ActionListener {
+    private View view;
     private Detector detector;
     private MyCamera camera;
     private boolean showEyes = false;
 
-    private MyPresenter(MyView view, Detector detector, MyCamera camera) {
+    private Controller(View view, Detector detector, MyCamera camera) {
         this.view = view;
         this.detector = detector;
         this.camera = camera;
@@ -24,7 +24,7 @@ public class MyPresenter implements ActionListener {
         startCameraDisplay();
     }
 
-    public MyPresenter(MyView view) throws FrameGrabber.Exception {
+    public Controller(View view) throws FrameGrabber.Exception {
         this(view, new Detector(), new MyCamera());
     }
 
