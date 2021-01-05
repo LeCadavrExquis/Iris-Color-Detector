@@ -1,3 +1,5 @@
+import UI.ImagePanel;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -22,28 +24,5 @@ public class MyView extends JFrame {
         this.repaint();
     }
 
-    private class ImagePanel extends JPanel {
-        private BufferedImage image;
 
-        public ImagePanel() {
-            try {
-                //TODO: change it to input stream
-                this.image = ImageIO.read(new File("src/main/resources/rys1.jpg"));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        public void setImage(BufferedImage image) {
-            this.image = image;
-        }
-
-        @Override
-        protected void paintComponent(Graphics g) {
-            super.paintComponent(g);
-            int width = image.getWidth();
-            int height = image.getHeight();
-            g.drawImage(image, 0, 0, width, height, null);
-        }
-    }
 }
