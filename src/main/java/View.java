@@ -15,21 +15,28 @@ public class View extends JFrame {
 
     public View() {
         super("Iris Color Detector");
-        this.setSize(740, 580);
-        this.setVisible(true);
-        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         this.setLayout(new BorderLayout());
 
         this.add(new JLabel("Iris color detector"), BorderLayout.NORTH);
         this.add(imagePanel, BorderLayout.CENTER);
         this.add(settingsPanel, BorderLayout.LINE_END);
+
+        this.showImage(getLoadingImage());
+
+        this.setVisible(true);
+        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+        this.revalidate();
+        this.repaint();
+        this.pack();
     }
 
     public void showImage(BufferedImage image) {
         imagePanel.setImage(image);
         this.revalidate();
         this.repaint();
+        this.pack();
     }
 
     public void setEyeColor(String color){
@@ -41,6 +48,17 @@ public class View extends JFrame {
     }
     public void cameraNotFound() {
         //TODO: dialog with error message
+    }
+
+    private BufferedImage getLoadingImage() {
+        try {
+            //TODO: change it to input stream
+            return ImageIO.read(new File("src/main/resources/rys1.jpg"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
 }

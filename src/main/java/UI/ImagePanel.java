@@ -10,17 +10,14 @@ import java.io.IOException;
 public class ImagePanel extends JPanel {
     private BufferedImage image;
 
-    public ImagePanel() {
-        try {
-            //TODO: change it to input stream
-            this.image = ImageIO.read(new File("src/main/resources/rys1.jpg"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
+    public ImagePanel(){
     }
 
     public void setImage(BufferedImage image) {
         this.image = image;
+        this.setPreferredSize(new Dimension(image.getWidth(), image.getHeight()));
+        this.revalidate();
     }
 
     @Override
@@ -30,8 +27,6 @@ public class ImagePanel extends JPanel {
 
         int width = image.getWidth();
         int height = image.getHeight();
-
-        this.setPreferredSize(new Dimension(width, height));
 
         g2d.drawImage(image, 0, 0, width, height, null);
     }

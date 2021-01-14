@@ -74,7 +74,7 @@ public class Controller implements ActionListener {
         } catch (FrameGrabber.Exception e) {
             e.printStackTrace();
         }
-
+        System.exit(0);
     }
 
     @Override
