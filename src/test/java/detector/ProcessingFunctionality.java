@@ -21,19 +21,19 @@ class ProcessingFunctionality {
 
     @Test
     void processPhoto(){
-        Mat image = imread(pathToResources + "HSV-color-space-and-RGB-color-transformation.png");
+        Mat image = imread(pathToResources + "blueEyesTest.jpg");
         imwrite("debug1.jpg", image);
         Mat blur = new Mat();
         GaussianBlur(image, blur, new Size(3,3), 0);
         imwrite("debug12.jpg", blur);
         Mat hsv = new Mat();
         Mat filtered = new Mat();
-        int H_MIN = 110;
-        int H_MAX = 125;
+        int H_MIN = 0;
+        int H_MAX = 30; // 179 max
         int S_MIN = 0;
-        int S_MAX = 256;
+        int S_MAX = 255;
         int V_MIN = 0;
-        int V_MAX = 256;
+        int V_MAX = 255; //~70%
         cvtColor(image, hsv, CV_BGR2HSV);
         inRange(hsv, new Mat(1, 1, CV_32SC4, new Scalar(H_MIN, S_MIN, V_MIN, 0)), new Mat(1, 1, CV_32SC4, new Scalar(H_MAX, S_MAX, V_MAX, 0)), filtered);
 
