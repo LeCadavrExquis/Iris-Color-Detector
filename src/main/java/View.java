@@ -39,5 +39,8 @@ public class View extends JFrame {
     public void setActionListener(ActionListener ac){
         settingsPanel.setActionListener(ac);
     }
+    public void cameraNotFound() {
+        //TODO: dialog with error message
+    }
 
 }

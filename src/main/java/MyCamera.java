@@ -10,9 +10,7 @@ public class MyCamera {
     protected OpenCVFrameConverter.ToMat toMatConverter;
     protected Java2DFrameConverter toBufferedImageConverter;
 
-    public MyCamera() throws FrameGrabber.Exception {
-        this.grabber = FrameGrabber.createDefault(0);
-        grabber.start();
+    public MyCamera()  {
         this.toMatConverter = new OpenCVFrameConverter.ToMat();
         this.toBufferedImageConverter = new Java2DFrameConverter();
     }
@@ -27,6 +25,11 @@ public class MyCamera {
 
     public BufferedImage convertMat2BufferedImage(Mat image) {
         return toBufferedImageConverter.convert(toMatConverter.convert(image));
+    }
+
+    public void start() throws FrameGrabber.Exception {
+        this.grabber = FrameGrabber.createDefault(0);
+        grabber.start();
     }
 
     public void stop() throws FrameGrabber.Exception {

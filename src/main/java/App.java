@@ -6,11 +6,8 @@ public class App {
     }
 
     public static void launch() {
-        try {
-            Controller controller = new Controller(new View());
-        } catch (FrameGrabber.Exception e) {
-            //TODO: send information for a user
-            e.printStackTrace();
-        }
+        Controller controller = new Controller(new View());
+
+        controller.startCameraDisplay();
     }
 }

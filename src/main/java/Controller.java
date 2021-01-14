@@ -20,11 +20,9 @@ public class Controller implements ActionListener {
         this.camera = camera;
 
         view.setActionListener(this::actionPerformed);
-
-        startCameraDisplay();
     }
 
-    public Controller(View view) throws FrameGrabber.Exception {
+    public Controller(View view)  {
         this(view, new Detector(), new MyCamera());
     }
 
@@ -45,7 +43,12 @@ public class Controller implements ActionListener {
         return colorName;
     }
 
-    private void startCameraDisplay() {
+    public void startCameraDisplay() {
+        try {
+            camera.start();
+        } catch (FrameGrabber.Exception e) {
+            view.cameraNotFound();
+        }
         while (view.isVisible()) {
             try {
                 BufferedImage grabbedImage = null;
