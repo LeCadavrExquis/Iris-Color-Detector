@@ -9,6 +9,7 @@ public class MyCamera {
     protected FrameGrabber grabber;
     protected OpenCVFrameConverter.ToMat toMatConverter;
     protected Java2DFrameConverter toBufferedImageConverter;
+    private boolean isConnected = false;
 
     public MyCamera()  {
         this.toMatConverter = new OpenCVFrameConverter.ToMat();
@@ -30,9 +31,17 @@ public class MyCamera {
     public void start() throws FrameGrabber.Exception {
         this.grabber = FrameGrabber.createDefault(0);
         grabber.start();
+
+        isConnected = true;
     }
 
     public void stop() throws FrameGrabber.Exception {
         grabber.stop();
+
+        isConnected = false;
+    }
+
+    public boolean isConnected() {
+        return isConnected;
     }
 }

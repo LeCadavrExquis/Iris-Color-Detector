@@ -1,25 +1,20 @@
 import detector.Detector;
 import detector.EyesNotFoundException;
 import org.bytedeco.javacv.FrameGrabber;
-import org.bytedeco.opencv.opencv_core.Mat;
-
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
+import java.awt.event.*;
 
-public class Controller implements ActionListener {
+public class Controller extends WindowAdapter implements ActionListener {
     private View view;
     private Detector detector;
     private MyCamera camera;
-    private boolean showEyes = false;
 
     private Controller(View view, Detector detector, MyCamera camera) {
         this.view = view;
         this.detector = detector;
         this.camera = camera;
 
-        view.setActionListener(this::actionPerformed);
+        view.setListeners(this::actionPerformed, this);
     }
 
     public Controller(View view)  {
@@ -43,58 +38,69 @@ public class Controller implements ActionListener {
         return colorName;
     }
 
-    public void startCameraDisplay() {
+    public void connectCamera() {
         try {
             camera.start();
         } catch (FrameGrabber.Exception e) {
-            view.cameraNotFound();
+            view.message("Failed connecting to camera", JOptionPane.ERROR_MESSAGE);
         }
-        while (view.isVisible()) {
-            try {
-                BufferedImage grabbedImage = null;
-                if (showEyes){
-                    Mat mat = detector.drawDetectedEyes(camera.grabImage());
-                    grabbedImage = camera.convertMat2BufferedImage(mat);
-                }else{
-                    grabbedImage = camera.grabBufferedImage();
-                }
-
-                view.showImage(grabbedImage);
-            } catch (FrameGrabber.Exception e) {
-                e.printStackTrace();
-                break;
-            }
-        }
-        terminate();
     }
 
-    private void terminate() {
+    public void disconnectCamera() {
         try {
             camera.stop();
         } catch (FrameGrabber.Exception e) {
-            e.printStackTrace();
+            view.message("Failed disconnecting from camera", JOptionPane.ERROR_MESSAGE);
         }
-        System.exit(0);
+    }
+
+    public void startCameraDisplay() {
+        if (camera.isConnected()) {
+            view.startDisplay(
+                    camera,
+                    mat -> camera.convertMat2BufferedImage(detector.drawDetectedEyes(mat))
+            );
+        }else {
+            view.message("Camera not connected", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    public void stopCameraDisplay() {
+        view.stopDisplay();
+    }
+
+    private void terminate() {
+        if (camera.isConnected()) {
+            System.out.println("attempt to disconnect camera");
+            disconnectCamera();
+        }
+        System.out.println("closing app...");
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        switch (e.getActionCommand()){
-            case "detect":
-                try {
-                    view.setEyeColor(getIrisColor());
-                } catch (FrameGrabber.Exception exception) {
-                    exception.printStackTrace();
-                }
+        switch (e.getActionCommand()) {
+            case "close":
+                terminate();
                 break;
-            case "showEyes":
-                JRadioButton button = (JRadioButton) e.getSource();
-                if (button.isSelected()){
-                    showEyes = true;
-                }else{
-                    showEyes = false;
-                }
+            case "connectCamera":
+                connectCamera();
+            case "startDisplay":
+                startCameraDisplay();
+                view.refresh();
+                break;
+            case "stopDisplay":
+                stopCameraDisplay();
+                break;
+            case "disconnectCamera":
+                disconnectCamera();
                 break;
         }
+    }
+
+    @Override
+    public void windowClosing(WindowEvent e) {
+        super.windowClosing(e);
+        terminate();
     }
 }
