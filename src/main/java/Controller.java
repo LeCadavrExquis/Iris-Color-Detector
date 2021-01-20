@@ -85,6 +85,7 @@ public class Controller extends WindowAdapter implements ActionListener {
                 break;
             case "connectCamera":
                 connectCamera();
+                //there is no break statement with premeditation
             case "startDisplay":
                 startCameraDisplay();
                 view.refresh();

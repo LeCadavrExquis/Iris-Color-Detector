@@ -4,15 +4,17 @@ import org.bytedeco.opencv.opencv_core.Mat;
 
 import javax.swing.*;
 import java.awt.image.BufferedImage;
+import java.util.List;
 import java.util.function.Function;
 
-class DisplayWorker extends SwingWorker<String, BufferedImage> {
+class DisplayWorker extends SwingWorker<Void, BufferedImage> {
     private JRadioButton radioButton;
     private DisplayPanel displayPanel;
     private MyCamera camera;
     private Function<Mat, BufferedImage> drawDetectedEyes;
 
     public DisplayWorker(JRadioButton radioButton, DisplayPanel displayPanel, MyCamera camera, Function<Mat, BufferedImage> drawDetectedEyes) {
+        super();
         this.radioButton = radioButton;
         this.displayPanel = displayPanel;
         this.camera = camera;
@@ -20,23 +22,25 @@ class DisplayWorker extends SwingWorker<String, BufferedImage> {
     }
 
     @Override
-    protected String doInBackground(){
+    protected Void doInBackground(){
         while (!isCancelled()) {
             try {
-                BufferedImage grabbedImage = null;
-                if (radioButton.isSelected()){
-                    grabbedImage = drawDetectedEyes.apply(camera.grabImage());
-                }else{
-                    grabbedImage = camera.grabBufferedImage();
-                }
+                BufferedImage grabbedImage = radioButton.isSelected() ?
+                        drawDetectedEyes.apply(camera.grabImage()) :
+                        camera.grabBufferedImage();
 
-                displayPanel.setImage(grabbedImage);
+                publish(grabbedImage);
 
-            } catch (FrameGrabber.Exception e) {
-                return "Camera error:" + e.getMessage();
+            } catch (FrameGrabber.Exception e ) {
+                e.printStackTrace();
             }
         }
+        return null;
+    }
 
-        return "OK";
+    @Override
+    protected void process(List<BufferedImage> chunks) {
+        BufferedImage lastFrame = chunks.get(chunks.size() - 1);
+        displayPanel.setImage(lastFrame);
     }
 }
