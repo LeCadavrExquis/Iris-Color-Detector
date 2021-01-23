@@ -4,6 +4,8 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 
@@ -12,14 +14,14 @@ public class DisplayPanel extends JPanel {
 
     public DisplayPanel(){
         super();
-//        this.image = getLoadingImage();
+        this.setImage(getLoadingImage());
     }
 
     public void setImage(BufferedImage image) {
-        this.image = image;
+        this.image = image != null ? image : getLoadingImage();
         this.setPreferredSize(new Dimension(image.getWidth(), image.getHeight()));
-        this.revalidate();
         this.repaint();
+        this.revalidate();
     }
 
     private BufferedImage getLoadingImage() {

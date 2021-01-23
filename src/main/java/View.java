@@ -2,23 +2,17 @@ import UI.DisplayPanel;
 import UI.SettingsPanel;
 import org.bytedeco.javacv.FrameGrabber;
 import org.bytedeco.opencv.opencv_core.Mat;
-
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
-import java.awt.image.ImagingOpException;
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.function.Function;
 
-public class View extends JFrame {
-    private DisplayPanel displayPanel;
+public final class View extends JFrame {
+    private static DisplayPanel displayPanel;
     private SettingsPanel settingsPanel;
     private DisplayWorker displayWorker = null;
 
@@ -30,7 +24,10 @@ public class View extends JFrame {
         this.settingsPanel = new SettingsPanel();
         this.displayPanel = new DisplayPanel();
 
-        this.add(new JLabel("Iris color detector"), BorderLayout.NORTH);
+        JLabel label = new JLabel("Iris color detector", SwingConstants.CENTER);
+        label.setFont(new Font("MS Gothic", Font.ITALIC, 30));
+
+        this.add(label, BorderLayout.NORTH);
         this.add(displayPanel, BorderLayout.CENTER);
         this.add(settingsPanel, BorderLayout.LINE_END);
 
@@ -46,10 +43,13 @@ public class View extends JFrame {
         this.pack();
     }
 
-    public void startDisplay(MyCamera camera, Function<Mat, BufferedImage> drawDetectedEyes){
-        this.displayPanel = new DisplayPanel();
-        this.displayWorker = new DisplayWorker(settingsPanel.getShowEyesButton(), displayPanel, camera, drawDetectedEyes);
-
+    public void startDisplay(MyCamera camera,Function<Mat, BufferedImage> drawDetectedEyes){
+        this.displayWorker = new DisplayWorker(this, camera, drawDetectedEyes);
+        try {
+            this.getDisplayPanel().setImage(camera.grabBufferedImage());
+            this.pack();
+        } catch (FrameGrabber.Exception e) {
+        }
         displayWorker.execute();
     }
 
@@ -74,5 +74,13 @@ public class View extends JFrame {
                 "Dialog",
                 messageType
         );
+    }
+
+    public DisplayPanel getDisplayPanel() {
+        return displayPanel;
+    }
+
+    public SettingsPanel getSettingsPanel() {
+        return settingsPanel;
     }
 }

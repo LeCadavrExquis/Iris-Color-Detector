@@ -1,4 +1,5 @@
 import UI.DisplayPanel;
+import UI.SettingsPanel;
 import org.bytedeco.javacv.FrameGrabber;
 import org.bytedeco.opencv.opencv_core.Mat;
 
@@ -13,12 +14,16 @@ class DisplayWorker extends SwingWorker<Void, BufferedImage> {
     private MyCamera camera;
     private Function<Mat, BufferedImage> drawDetectedEyes;
 
-    public DisplayWorker(JRadioButton radioButton, DisplayPanel displayPanel, MyCamera camera, Function<Mat, BufferedImage> drawDetectedEyes) {
+    private DisplayWorker(JRadioButton radioButton, DisplayPanel displayPanel, MyCamera camera, Function<Mat, BufferedImage> drawDetectedEyes) {
         super();
         this.radioButton = radioButton;
         this.displayPanel = displayPanel;
         this.camera = camera;
         this.drawDetectedEyes = drawDetectedEyes;
+    }
+
+    public DisplayWorker(View view, MyCamera camera, Function<Mat, BufferedImage> drawDetectedEyes) {
+        this(view.getSettingsPanel().getShowEyesButton(),view.getDisplayPanel(), camera,drawDetectedEyes);
     }
 
     @Override
@@ -31,8 +36,8 @@ class DisplayWorker extends SwingWorker<Void, BufferedImage> {
 
                 publish(grabbedImage);
 
-            } catch (FrameGrabber.Exception e ) {
-                e.printStackTrace();
+            } catch (FrameGrabber.Exception igrnore) {
+                //ignore
             }
         }
         return null;
@@ -41,6 +46,6 @@ class DisplayWorker extends SwingWorker<Void, BufferedImage> {
     @Override
     protected void process(List<BufferedImage> chunks) {
         BufferedImage lastFrame = chunks.get(chunks.size() - 1);
-        displayPanel.setImage(lastFrame);
+        this.displayPanel.setImage(lastFrame);
     }
 }

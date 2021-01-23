@@ -3,6 +3,8 @@ package detector;
 import org.bytedeco.opencv.opencv_core.Mat;
 import org.junit.jupiter.api.Test;
 
+import javax.swing.*;
+
 import static org.bytedeco.opencv.global.opencv_imgcodecs.imread;
 import static org.bytedeco.opencv.global.opencv_imgcodecs.imwrite;
 import static org.junit.jupiter.api.Assertions.assertEquals;
