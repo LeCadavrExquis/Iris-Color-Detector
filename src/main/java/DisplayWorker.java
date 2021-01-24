@@ -8,7 +8,7 @@ import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.function.Function;
 
-class DisplayWorker extends SwingWorker<Void, BufferedImage> {
+public class DisplayWorker extends SwingWorker<Void, BufferedImage> {
     private JRadioButton radioButton;
     private DisplayPanel displayPanel;
     private MyCamera camera;

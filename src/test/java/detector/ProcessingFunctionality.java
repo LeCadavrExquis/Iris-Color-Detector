@@ -21,27 +21,31 @@ class ProcessingFunctionality {
 
     @Test
     void processPhoto(){
-        Mat image = imread(pathToResources + "blueEyesTest.jpg");
-        imwrite("debug1.jpg", image);
+        Mat image = imread(pathToResources + "tmpcut0.jpg");
         Mat blur = new Mat();
         GaussianBlur(image, blur, new Size(3,3), 0);
-        imwrite("debug12.jpg", blur);
+//        imwrite("debug12.jpg", blur);
         Mat hsv = new Mat();
         Mat filtered = new Mat();
         int H_MIN = 0;
-        int H_MAX = 30; // 179 max
+        int H_MAX = 179; // 179 max
         int S_MIN = 0;
         int S_MAX = 255;
         int V_MIN = 0;
-        int V_MAX = 255; //~70%
-        cvtColor(image, hsv, CV_BGR2HSV);
-        inRange(hsv, new Mat(1, 1, CV_32SC4, new Scalar(H_MIN, S_MIN, V_MIN, 0)), new Mat(1, 1, CV_32SC4, new Scalar(H_MAX, S_MAX, V_MAX, 0)), filtered);
+        int V_MAX = 100; //~70%
 
-        imwrite("debug2.jpg", filtered);
+//        S_MIN = 0;
+//        S_MAX = 70;
+//        V_MIN = 30;
+//        V_MAX = 120; //~70%
         cvtColor(blur, hsv, CV_BGR2HSV);
         inRange(hsv, new Mat(1, 1, CV_32SC4, new Scalar(H_MIN, S_MIN, V_MIN, 0)), new Mat(1, 1, CV_32SC4, new Scalar(H_MAX, S_MAX, V_MAX, 0)), filtered);
 
-        imwrite("debug22.jpg", filtered);
+        imwrite("debug2_nowy.jpg", filtered);
+//        cvtColor(blur, hsv, CV_BGR2HSV);
+//        inRange(hsv, new Mat(1, 1, CV_32SC4, new Scalar(H_MIN, S_MIN, V_MIN, 0)), new Mat(1, 1, CV_32SC4, new Scalar(H_MAX, S_MAX, V_MAX, 0)), filtered);
+//
+//        imwrite("debug22.jpg", filtered);
 
         fail("not implemented");
     }

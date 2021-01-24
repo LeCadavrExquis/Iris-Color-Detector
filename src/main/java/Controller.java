@@ -1,8 +1,18 @@
 import detector.Detector;
 import detector.EyesNotFoundException;
 import org.bytedeco.javacv.FrameGrabber;
+import org.bytedeco.opencv.opencv_core.Mat;
+
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.bytedeco.opencv.global.opencv_imgcodecs.imwrite;
 
 public class Controller extends WindowAdapter implements ActionListener {
     private View view;
@@ -19,6 +29,64 @@ public class Controller extends WindowAdapter implements ActionListener {
 
     public Controller(View view)  {
         this(view, new Detector(), new MyCamera());
+    }
+
+    public PresentationMode getPresentation() {
+
+        BufferedImage originalImage = null;
+
+        int dialogResult = JOptionPane.showConfirmDialog(view, "Do you want to grab a photo from disc ? (if not will be taken from camera)", "", JOptionPane.YES_NO_OPTION);
+        switch (dialogResult) {
+            case JOptionPane.YES_OPTION:
+                try {
+                    JFileChooser fc = new JFileChooser();
+                    int returnVal = fc.showOpenDialog(view);
+
+                    if (returnVal != JFileChooser.APPROVE_OPTION){
+                        throw new FileNotFoundException();
+                    }
+
+                    originalImage = ImageIO.read(fc.getSelectedFile());
+                } catch (FileNotFoundException fnfE) {
+                    view.message("File not found !", JOptionPane.ERROR_MESSAGE);
+                } catch (IOException ioE) {
+                    view.message("Cannot read the file", JOptionPane.ERROR_MESSAGE);
+                }
+                break;
+            case JOptionPane.NO_OPTION:
+                if (!camera.isConnected()) {
+                    connectCamera();
+                }
+                try {
+                    originalImage = camera.grabBufferedImage();
+                } catch (FrameGrabber.Exception e) {
+                    view.message("Fail grabing an image from camera", JOptionPane.ERROR_MESSAGE);
+                }
+
+                disconnectCamera();
+
+                break;
+        }
+        List<Mat> cutEyes = null;
+        try {
+            cutEyes = detector.getCutEyes(camera.convertBufferedImage2Mat(originalImage));
+        } catch (EyesNotFoundException e) {
+            //TODO: not sure if it is necessary
+            view.message("Eyes not found", JOptionPane.ERROR_MESSAGE);
+        }
+
+        for (int i = 0; i < cutEyes.size(); i++) {
+            imwrite("tmpcut" + i + ".jpg", cutEyes.get(i));
+        }
+
+
+
+        return new PresentationMode(
+                originalImage,
+                camera.convertMat2BufferedImage(detector.drawDetectedEyes(camera.convertBufferedImage2Mat(originalImage))),
+                cutEyes.stream().map(camera::convertMat2BufferedImage).collect(Collectors.toList()),
+                detector.getFilteredEyes(cutEyes)
+        );
     }
 
     public String getIrisColor() throws FrameGrabber.Exception {
@@ -95,6 +163,9 @@ public class Controller extends WindowAdapter implements ActionListener {
                 break;
             case "disconnectCamera":
                 disconnectCamera();
+                break;
+            case "presentation":
+                view.setPresentationMode(getPresentation());
                 break;
         }
     }

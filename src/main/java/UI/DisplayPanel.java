@@ -17,6 +17,11 @@ public class DisplayPanel extends JPanel {
         this.setImage(getLoadingImage());
     }
 
+    public DisplayPanel(BufferedImage image){
+        super();
+        this.setImage(image);
+    }
+
     public void setImage(BufferedImage image) {
         this.image = image != null ? image : getLoadingImage();
         this.setPreferredSize(new Dimension(image.getWidth(), image.getHeight()));
